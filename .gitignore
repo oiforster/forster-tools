@@ -1,0 +1,10 @@
+# Configurações com dados pessoais — nunca commitar
+config.json
+*.env
+
+# macOS
+.DS_Store
+Icon
+
+# Logs
+*.log
