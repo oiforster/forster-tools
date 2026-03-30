@@ -106,9 +106,12 @@ def main():
             continue
 
         pdf_path = r.get("pdf_path")
-        if not pdf_path or not Path(pdf_path).exists():
-            print(f"  AVISO: PDF não encontrado para {r['apelido']}. Enviando sem anexo.")
-            pdf_path = None
+        xml_path = r.get("xml_path")
+        arquivos = []
+        if pdf_path and Path(pdf_path).exists():
+            arquivos.append(pdf_path)
+        if xml_path and Path(xml_path).exists():
+            arquivos.append(xml_path)
 
         competencia_fmt = formatar_competencia(competencia)
         valor_fmt = formatar_valor(r["valor"])
@@ -125,13 +128,13 @@ def main():
             "dataEnvio": envio.isoformat(),
             "criadoEm": agora.isoformat(),
         }
-        if pdf_path:
-            item["media"] = pdf_path
+        if arquivos:
+            item["media"] = arquivos if len(arquivos) > 1 else arquivos[0]
 
         agendados.append(item)
         novos += 1
-        print(f"  Agendado: {r['apelido']} → {whatsapp} às {envio.strftime('%H:%M')}" +
-              (" (com PDF)" if pdf_path else " (sem PDF)"))
+        anexos = f"PDF + XML" if len(arquivos) == 2 else f"{'PDF' if pdf_path else 'XML'}" if arquivos else "sem anexo"
+        print(f"  Agendado: {r['apelido']} → {whatsapp} às {envio.strftime('%H:%M')} ({anexos})")
 
     if novos > 0:
         salvar_agendados(agendados)
