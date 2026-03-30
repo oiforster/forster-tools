@@ -1,0 +1,87 @@
+{
+  "emissor_ativo": "samuel_mei",
+
+  "emissores": {
+    "samuel_mei": {
+      "cnpj":       "35935852000155",
+      "regime":     "MEI",
+      "im":         "",
+      "nome":       "SAMUEL ROSSANO FORSTER",
+      "cMunGer":    "4310108",
+      "uf":         "RS",
+      "certificado": {
+        "pfx":   "certificados/samuel_mei.pfx",
+        "senha": "SENHA_DO_PFX"
+      },
+      "clientes": [
+        {
+          "apelido":    "Vanessa",
+          "nome":       "VANESSA MAINARDI TREINAMENTOS TERAPEUTICOS LTDA",
+          "cnpj":       "09522569000191",
+          "logradouro": "Rua Joaquim Nabuco",
+          "numero":     "1685",
+          "complemento":"Sala 21",
+          "bairro":     "Centro",
+          "cMun":       "4313409",
+          "uf":         "RS",
+          "cep":        "93310002",
+          "valor":      2000.00
+        },
+        {
+          "apelido":    "Colegio",
+          "nome":       "ASSOCIACAO EDUCACIONAL LUTERANA REDENTOR",
+          "cnpj":       "87370540000145",
+          "logradouro": "Rua Jose Bonifacio",
+          "numero":     "140",
+          "complemento":"",
+          "bairro":     "Bom Pastor",
+          "cMun":       "4310108",
+          "uf":         "RS",
+          "cep":        "95650000",
+          "valor":      2696.00
+        },
+        {
+          "apelido":    "Micheline",
+          "nome":       "MICHELINE ANGELITA GRINGS TWIGGER",
+          "cpf":        "65367855091",
+          "logradouro": "Rua Dr Edmundo Lauffer",
+          "numero":     "351",
+          "complemento":"Apartamento 602",
+          "bairro":     "Bom Pastor",
+          "cMun":       "4310108",
+          "uf":         "RS",
+          "cep":        "95650000",
+          "valor":      2000.00
+        }
+      ]
+    },
+
+    "silvana_simples": {
+      "cnpj":       "18129107000108",
+      "regime":     "simples_nacional",
+      "im":         "",
+      "nome":       "SILVANA SPARRENBERGER FORSTER",
+      "cMunGer":    "4310108",
+      "uf":         "RS",
+      "certificado": {
+        "pfx":   "certificados/silvana_simples.pfx",
+        "senha": "SENHA_DO_PFX"
+      },
+      "clientes": []
+    }
+  },
+
+  "servico": {
+    "cServ":     "01.03.01",
+    "xDescServ": "Prestacao de servicos de producao audiovisual, compreendendo captacao, direcao, edicao de videos, criacao de conteudo visual e gerenciamento de publicacoes em redes sociais, conforme contrato de prestacao de servicos vigente.",
+    "CNBS":      "114081300",
+    "cTribNac":  "130301"
+  },
+
+  "ambiente": "homologacao",
+
+  "controle_dps": {
+    "serie":       "FORST",
+    "proximo_nDPS": 1
+  }
+}

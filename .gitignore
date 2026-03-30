@@ -1,6 +1,17 @@
 # Configurações com dados pessoais — nunca commitar
 config.json
+config_emissao.json
 *.env
+
+# Certificados digitais
+notas-fiscais/certificados/
+
+# Resultados de emissão (dados sensíveis)
+notas-fiscais/ultima_emissao.json
+
+# Python
+__pycache__/
+*.pyc
 
 # macOS
 .DS_Store
@@ -8,3 +19,8 @@ Icon
 
 # Logs
 *.log
+notas-fiscais/logs/
+
+# Temporários
+notas-fiscais/schemas.zip
+notas-fiscais/schema_v101.xsd
