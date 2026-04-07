@@ -1,0 +1,10 @@
+{
+  "name": "forster-notas-fiscais",
+  "version": "1.0.0",
+  "description": "Ferramentas de NFS-e — Forster Tools",
+  "private": true,
+  "dependencies": {
+    "fast-xml-parser": "^4.3.6",
+    "puppeteer-core": "^22.0.0"
+  }
+}

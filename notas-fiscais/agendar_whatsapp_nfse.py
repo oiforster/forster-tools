@@ -24,7 +24,7 @@ CONFIG_EMISSAO = SCRIPT_DIR / "config_emissao.json"
 AGENDADOS_PATH = Path.home() / "Documents" / "forster-lembretes" / "agendados.json"
 
 MENSAGEM_TEMPLATE = (
-    "Bom dia! Segue a Nota Fiscal de Serviço referente a {competencia_fmt}.\n\n"
+    "{saudacao}! Segue a Nota Fiscal de Serviço referente a {competencia_fmt}.\n\n"
     "Valor: R$ {valor_fmt}\n\n"
     "Chave PIX para pagamento: 35.935.852/0001-55\n\n"
     "Qualquer dúvida, estamos à disposição. Obrigado!"
@@ -46,6 +46,17 @@ def formatar_competencia(comp_str):
 def formatar_valor(valor):
     """2000.0 → '2.000,00'"""
     return f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def saudacao_por_horario():
+    """Retorna saudação conforme horário de Brasília (UTC-3, sem horário de verão)."""
+    hora = datetime.now(FUSO_BR).hour
+    if 6 <= hora < 12:
+        return "Bom dia"
+    elif 12 <= hora < 18:
+        return "Boa tarde"
+    else:
+        return "Boa noite"
 
 
 def ler_agendados():
@@ -105,18 +116,33 @@ def main():
             print(f"  AVISO: Número WhatsApp não encontrado para {r['apelido']}. Pulando.")
             continue
 
+        # xml_path deve apontar para o XML de retorno da emissão (não o DPS enviado).
+        # Para IPM: ipm_*_slug.xml  |  Para Portal Nacional: XML retornado pela prefeitura.
         pdf_path = r.get("pdf_path")
         xml_path = r.get("xml_path")
         arquivos = []
-        if pdf_path and Path(pdf_path).exists():
-            arquivos.append(pdf_path)
-        if xml_path and Path(xml_path).exists():
-            arquivos.append(xml_path)
+
+        if pdf_path:
+            if Path(pdf_path).exists():
+                arquivos.append(pdf_path)
+            else:
+                print(f"  ⚠ PDF não encontrado: {pdf_path}")
+        else:
+            print(f"  ⚠ pdf_path ausente para {r['apelido']} — mensagem sairá sem PDF.")
+
+        if xml_path:
+            if Path(xml_path).exists():
+                arquivos.append(xml_path)
+            else:
+                print(f"  ⚠ XML de retorno não encontrado: {xml_path}")
+        else:
+            print(f"  ⚠ xml_path ausente para {r['apelido']} — mensagem sairá sem XML de retorno.")
 
         competencia_fmt = formatar_competencia(competencia)
         valor_fmt = formatar_valor(r["valor"])
 
         mensagem = MENSAGEM_TEMPLATE.format(
+            saudacao=saudacao_por_horario(),
             competencia_fmt=competencia_fmt,
             valor_fmt=valor_fmt,
         )
@@ -128,12 +154,14 @@ def main():
             "dataEnvio": envio.isoformat(),
             "criadoEm": agora.isoformat(),
         }
+        # Sempre lista — garante consistência no forster-lembretes independente da quantidade
         if arquivos:
-            item["media"] = arquivos if len(arquivos) > 1 else arquivos[0]
+            item["media"] = arquivos
 
         agendados.append(item)
         novos += 1
-        anexos = f"PDF + XML" if len(arquivos) == 2 else f"{'PDF' if pdf_path else 'XML'}" if arquivos else "sem anexo"
+        n_arq = len(arquivos)
+        anexos = "PDF + XML" if n_arq == 2 else ("PDF" if pdf_path else "XML") if n_arq == 1 else "⚠ sem anexo"
         print(f"  Agendado: {r['apelido']} → {whatsapp} às {envio.strftime('%H:%M')} ({anexos})")
 
     if novos > 0:

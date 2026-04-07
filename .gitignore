@@ -24,3 +24,6 @@ notas-fiscais/logs/
 # Temporários
 notas-fiscais/schemas.zip
 notas-fiscais/schema_v101.xsd
+
+# Dependências Node
+node_modules/

@@ -181,7 +181,7 @@ def sub(parent, tag, texto=None, attribs=None):
 def montar_dps_xml(cliente, emissor, config, ndps, ambiente="homologacao", competencia=None):
     """Monta o XML da DPS no padrão nacional."""
     servico = config["servico"]
-    controle = config["controle_dps"]
+    controle = emissor.get("controle_dps") or config["controle_dps"]
     serie = controle["serie"]
 
     agora = datetime.now(FUSO_BR)
@@ -440,10 +440,11 @@ def interpretar_retorno(resposta):
 # Controle de numeração
 # ---------------------------------------------------------------------------
 
-def proximo_ndps(config):
-    """Retorna o próximo nDPS e incrementa no config."""
-    n = config["controle_dps"]["proximo_nDPS"]
-    config["controle_dps"]["proximo_nDPS"] = n + 1
+def proximo_ndps(config, emissor=None):
+    """Retorna o próximo nDPS e incrementa no config (ou no emissor, se tiver controle_dps próprio)."""
+    controle = (emissor.get("controle_dps") if emissor else None) or config["controle_dps"]
+    n = controle["proximo_nDPS"]
+    controle["proximo_nDPS"] = n + 1
     return n
 
 
@@ -664,16 +665,24 @@ def processar_pos_emissao(resposta, cliente, emissor, config, competencia, cert_
     xml_path = salvar_nfse_xml(xml_bytes, chave, emissor, competencia, nome_tomador)
     print(f"  XML salvo: {xml_path}")
 
-    # 5. Baixa DANFSE (PDF)
+    # 5. Gera PDF local via Node.js (substitui download /danfse que retorna 501)
+    import subprocess
     pdf_path = None
-    print("  Baixando DANFSE (PDF)...")
-    pdf_data = baixar_danfse_pdf(chave, cert_pem, key_pem, ambiente)
-    if isinstance(pdf_data, dict) and pdf_data.get("erro"):
-        print(f"  AVISO: PDF não disponível: {pdf_data.get('mensagem', '')[:200]}")
-    elif isinstance(pdf_data, bytes):
-        pdf_path = xml_path.parent / f"{chave}.pdf"
-        pdf_path.write_bytes(pdf_data)
-        print(f"  PDF salvo: {pdf_path}")
+    print("  Gerando PDF local...")
+    try:
+        resultado = subprocess.run(
+            ["/opt/homebrew/bin/node", "gerar_pdf_nfse.js", str(xml_path)],
+            capture_output=True,
+            text=True,
+            cwd=str(Path(__file__).parent),
+        )
+        if resultado.returncode == 0:
+            pdf_path = Path(resultado.stdout.strip())
+            print(f"  PDF gerado: {pdf_path}")
+        else:
+            print(f"  AVISO: Falha ao gerar PDF: {resultado.stderr[:200]}")
+    except Exception as e:
+        print(f"  AVISO: Erro ao gerar PDF: {e}")
 
     # 6. Atualiza controle
     doc_tomador = cliente.get("cnpj", cliente.get("cpf", ""))
@@ -751,7 +760,7 @@ def main():
         print(f"\n> {apelido}")
         print(f"  Valor: R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
 
-        ndps = proximo_ndps(config)
+        ndps = proximo_ndps(config, emissor)
         print(f"  DPS nº {ndps} (série {config['controle_dps']['serie']})")
 
         # Monta XML
