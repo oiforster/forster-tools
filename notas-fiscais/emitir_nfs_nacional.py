@@ -71,9 +71,12 @@ NS_DS = "http://www.w3.org/2000/09/xmldsig#"
 
 FUSO_BR = timezone(timedelta(hours=-3))
 
-# Caminhos de armazenamento
+# Caminhos de armazenamento — vault local do Syncthing (~/Forster-Vault), o nó do
+# Mac que substitui o antigo SynologyDrive-Agencia (CloudStorage desativado).
+# Escrever aqui (e NÃO via SMB /Volumes/Agencia) evita conflito de Syncthing no
+# Controle_NFS_Samuel.md (.md) — regra do CLAUDE.md global; propaga pro NAS sozinho.
 FINANCEIRO_BASE = Path(os.path.expanduser(
-    "~/Library/CloudStorage/SynologyDrive-Agencia/_Financeiro"
+    os.environ.get("FORSTER_FINANCEIRO_BASE", "~/Forster-Vault/_Financeiro")
 ))
 CONTROLE_NFS = FINANCEIRO_BASE / "Controle_NFS_Samuel.md"
 NOTAS_BASE = FINANCEIRO_BASE / "Notas_Fiscais"
