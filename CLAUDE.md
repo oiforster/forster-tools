@@ -11,7 +11,8 @@ Leia este arquivo antes de qualquer tarefa neste repositório.
 forster-tools/
 ├── notas-fiscais/     ← módulo principal desta sessão
 ├── auphonic/          ← automação Auphonic (separado)
-└── reel-cover-generator/
+├── reel-cover-generator/
+└── xbar-fila-edicao/  ← plugin de Xbar da fila de edição (separado)
 ```
 
 ---

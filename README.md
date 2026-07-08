@@ -13,6 +13,7 @@ Cada ferramenta é independente, documentada e pronta para uso com configuraçã
 | [💸 lembretes](https://github.com/forsterfilmes/forster-lembretes) | Lembretes automáticos de pagamento via WhatsApp — app desktop com interface gráfica |
 | [🎙 auphonic](./auphonic/) | Extrai áudio de MP4s e processa automaticamente no Auphonic |
 | [🧾 notas-fiscais](./notas-fiscais/) | Organiza XMLs de NFS-e e lança no arquivo de controle mensal |
+| [📋 xbar-fila-edicao](./xbar-fila-edicao/) | Plugin de Xbar com a fila de edição de vídeos pendentes, detectada automaticamente a partir do Conteúdo Mensal de cada cliente |
 
 ---
 
